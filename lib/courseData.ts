@@ -919,7 +919,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Image Processing',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7', "MAC"]
   },
   {
     'deptCode': 'BITS',
@@ -960,7 +960,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Nonlinear Dynamics and Chaos',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['B5']
+    'delList': ['B5',"MAC"]
   },
   {
     'deptCode': 'BITS',
@@ -1048,7 +1048,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Quantum Information and Computation',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7', 'B5']
+    'delList': ['A7', 'B5',"MAC"]
   },
   {
     'deptCode': 'BITS',
@@ -1424,7 +1424,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Cryptography',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['AA', 'A7', 'B4']
+    'delList': ['AA', 'A7', 'B4',"MAC"]
   },
   {
     'deptCode': 'BITS',
@@ -1432,7 +1432,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Machine Learning',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'BITS',
@@ -2849,7 +2849,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Database Systems',
     'courseCredits': 4,
     'cdcList': ['A7'],
-    'delList': []
+    'delList': ["MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3033,7 +3033,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Computational Geometry',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3057,7 +3057,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Artificial Intelligence',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3073,7 +3073,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Data Mining',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3081,7 +3081,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Parallel Computing',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3097,7 +3097,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Deep Learning',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3105,7 +3105,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Graph Mining',
     'courseCredits': 4,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3185,7 +3185,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Network Security',
     'courseCredits': 4,
     'cdcList': [],
-    'delList': ['A7']
+    'delList': ['A7',"MAC"]
   },
   {
     'deptCode': 'CS',
@@ -3601,7 +3601,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Derivatives and Risk Management',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['B3']
+    'delList': ['B3',"MAC"]
   },
   {
     'deptCode': 'ECON',
@@ -5529,7 +5529,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Computer Graphics',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': []
+    'delList': ["MAC"]
   },
   {
     'deptCode': 'IS',
@@ -5705,7 +5705,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Graphs and Networks',
     'courseCredits': 3,
     'cdcList': ['B4'],
-    'delList': []
+    'delList': ["MAC"]
   },
   {
     'deptCode': 'MATH',
@@ -5793,7 +5793,7 @@ const coursesData: Course[] = [
     'courseTitle': 'Statistical Inference and Applications',
     'courseCredits': 3,
     'cdcList': [],
-    'delList': ['B4']
+    'delList': ['B4',"MAC"]
   },
   {
     'deptCode': 'MATH',
@@ -5881,7 +5881,31 @@ const coursesData: Course[] = [
     'courseTitle': 'Applied Stochastic Process',
     'courseCredits': 4,
     'cdcList': [],
-    'delList': ['B4', 'B5']
+    'delList': ['B4', 'B5',"MAC"]
+  },
+  {
+    'deptCode': 'MATH',
+    'courseCode': 'F425',
+    'courseTitle': 'Numerical Linear Algebra',
+    'courseCredits': 4,
+    'cdcList': [],
+    'delList': ['B4',"MAC"]
+  },
+  {
+    'deptCode': 'MATH',
+    'courseCode': 'F426',
+    'courseTitle': 'Mathematical Theory of Finite Element Methods',
+    'courseCredits': 4,
+    'cdcList': [],
+    'delList': ['B4',"MAC"]
+  },
+  {
+    'deptCode': 'MATH',
+    'courseCode': 'F428',
+    'courseTitle': 'Time Series Analysis and Forecasting',
+    'courseCredits': 4,
+    'cdcList': [],
+    'delList': ['B4',"MAC"]
   },
   {
     'deptCode': 'MATH',
@@ -7643,6 +7667,197 @@ const coursesData: Course[] = [
     'cdcList': [],
     'delList': ['B5']
   },
+  {
+    'deptCode': "MAC",
+    'courseCode': 'F211',
+    'courseTitle': 'Linear Algebra and Applications',
+    'courseCredits': 3,
+    'cdcList': ["MAC"],
+    'delList': []
+  },
+  {
+    'deptCode': "MAC",
+    'courseCode': 'F212',
+    'courseTitle': 'Object Oriented Programming',
+    'courseCredits': 4,
+    'cdcList': ["MAC"],
+    'delList': []
+  },
+  {
+    'deptCode': "MAC",
+    'courseCode': 'F213',
+    'courseTitle': 'Discrete Mathematics',
+    'courseCredits': 3,
+    'cdcList': ["MAC"],
+    'delList': []
+  },
+  {
+    'deptCode': "MAC",
+    'courseCode': 'F214',
+    'courseTitle': 'Elementary Real Analysis ',
+    'courseCredits': 3,
+    'cdcList': ["MAC"],
+    'delList': []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F241",
+    "courseTitle": "Numerical Analysis",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F242",
+    "courseTitle": "Data Structures & Algorithms",
+    "courseCredits": 4,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F243",
+    "courseTitle": "Numerical Optimization",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F244",
+    "courseTitle": "Stochastic Calculus and Application to Finance",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F245",
+    "courseTitle": "Scientific Computing Laboratory",
+    "courseCredits": 1,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F311",
+    "courseTitle": "Algebra I",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F341",
+    "courseTitle": "Design and Analysis of Algorithms",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F312",
+    "courseTitle": "Foundations of Data Science",
+    "courseCredits": 3,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F342",
+    "courseTitle": "Computational Partial Differential Equations",
+    "courseCredits": 4,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F313",
+    "courseTitle": "Statistical Data Analysis",
+    "courseCredits": 4,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F314",
+    "courseTitle": "Mathematical Modelling",
+    "courseCredits": 4,
+    "cdcList": ["AD"],
+    "delList": []
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F266",
+    "courseTitle": "Study Project",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F366",
+    "courseTitle": "Laboratory Project",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F367",
+    "courseTitle": "Laboratory Project",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F376",
+    "courseTitle": "Design Project",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F377",
+    "courseTitle": "Design Project",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F411",
+    "courseTitle": "Computation of Option Pricing Models",
+    "courseCredits": 4,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  },
+  {
+    "deptCode": "AD",
+    "courseCode": "F491",
+    "courseTitle": "Special Project ",
+    "courseCredits": 3,
+    "cdcList": [],
+    "delList": [
+      "AD"
+    ]
+  }
+
 ];
 
 export default coursesData;
