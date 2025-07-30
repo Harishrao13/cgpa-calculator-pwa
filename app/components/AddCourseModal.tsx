@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { courseCodeList, gradeOptions } from "@/lib/courseMetaData";
 import coursesData from "@/lib/courseData";
+import { useCGPA } from '@/contexts/CGPAContext';
 
 interface CourseData {
   deptCode: string;
@@ -38,6 +39,7 @@ interface Course {
   credits: number;
   grade: string;
   gradePoints: number;
+  isDuplicate?: boolean; 
 }
 
 interface CourseDetails {
@@ -62,6 +64,7 @@ export default function AddCourseModal({
   editingCourse,
   onCancelEdit 
 }: AddCourseModalProps) {
+  const { state } = useCGPA();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedDept, setSelectedDept] = useState<string>("AN");
   const [selectedCourseCode, setSelectedCourseCode] = useState<string>("F311");
@@ -74,6 +77,28 @@ export default function AddCourseModal({
         .filter((course: CourseData) => course.deptCode === selectedDept)
         .map((course: CourseData) => course.courseCode)
     : [];
+
+  // Function to check for duplicate courses across all semesters
+  const findDuplicateCourse = (deptCode: string, courseCode: string): { course: Course; semesterCode: string } | null => {
+    for (const [semesterCode, semesterData] of Object.entries(state.semesters)) {
+      const duplicateCourse = semesterData.courses.find(
+        course => course.deptCode === deptCode && course.courseCode === courseCode
+      );
+      if (duplicateCourse) {
+        return { course: duplicateCourse, semesterCode };
+      }
+    }
+    return null;
+  };
+
+  // Function to get semester priority (lower number = later semester)
+  const getSemesterPriority = (semesterCode: string): number => {
+    const priorities: { [key: string]: number } = {
+      'sem1': 1, 'sem2': 2, 'sem3': 3, 'sem4': 4, 'sem5': 5, 'sem6': 6,
+      'sem7': 7, 'sem8': 8, 'sem9': 9, 'sem10': 10, 'sem11': 11, 'sem12': 12
+    };
+    return priorities[semesterCode] || 999;
+  };
 
   // Populate form when editing
   useEffect(() => {
@@ -108,6 +133,34 @@ export default function AddCourseModal({
 
   const handleSubmit = (): void => {
     if (selectedDept && selectedCourseCode && selectedGrade && courseDetails) {
+      // Check for duplicate course when adding new course
+      if (!editingCourse) {
+        const duplicate = findDuplicateCourse(selectedDept, selectedCourseCode);
+        
+        if (duplicate) {
+          const currentSemPriority = getSemesterPriority(state.currentSemester);
+          const duplicateSemPriority = getSemesterPriority(duplicate.semesterCode);
+          
+          // If current semester is later (higher priority number), mark previous course as duplicate
+          if (currentSemPriority > duplicateSemPriority) {
+            // Mark the previous course as duplicate (for CGPA calculation exclusion)
+            const updatedDuplicateCourse: Course = {
+              ...duplicate.course,
+              isDuplicate: true // Add this flag to identify duplicates
+            };
+            
+            // Update the previous course to mark it as duplicate
+            onUpdateCourse(updatedDuplicateCourse);
+            
+            console.log(`Marking previous course ${selectedDept} ${selectedCourseCode} in ${duplicate.semesterCode} as duplicate`);
+          } else {
+            // Current semester is earlier, don't add this course
+            alert(`Course ${selectedDept} ${selectedCourseCode} already exists in a later semester (${duplicate.semesterCode}). Cannot add to an earlier semester.`);
+            return;
+          }
+        }
+      }
+
       if (editingCourse) {
         // Update existing course
         const updatedCourse: Course = {
@@ -129,7 +182,8 @@ export default function AddCourseModal({
           courseName: courseDetails.courseTitle,
           credits: courseDetails.courseCredits,
           grade: selectedGrade,
-          gradePoints: gradeOptions.find(g => g.value === selectedGrade)?.points || 0
+          gradePoints: gradeOptions.find(g => g.value === selectedGrade)?.points || 0,
+          isDuplicate: false // Mark as not duplicate initially
         };
         onAddCourse(newCourse);
       }

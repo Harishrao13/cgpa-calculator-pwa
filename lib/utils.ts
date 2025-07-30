@@ -14,6 +14,7 @@ interface CourseGrade {
   credits: number;
   grade: string;
   gradePoints: number;
+  isDuplicate?: boolean;
 }
 
 interface SemesterData {
@@ -44,7 +45,8 @@ export const calculateCGPA = (semesterData: { [key: string]: SemesterData }): nu
   const allCourses: CourseGrade[] = [];
   
   Object.values(semesterData).forEach(semester => {
-    allCourses.push(...semester.courses);
+    const validCourses = semester.courses.filter(course => !course.isDuplicate);
+    allCourses.push(...validCourses);
   });
   
   return calculateSGPA(allCourses);
@@ -58,7 +60,8 @@ export const calculateTotalCredits = (semesterData: { [key: string]: SemesterDat
   let totalCredits = 0;
   
   Object.values(semesterData).forEach(semester => {
-    totalCredits += calculateSemesterCredits(semester.courses);
+    const validCourses = semester.courses.filter(course => !course.isDuplicate);
+    totalCredits += calculateSemesterCredits(validCourses);
   });
   
   return totalCredits;

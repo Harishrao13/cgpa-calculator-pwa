@@ -96,10 +96,7 @@ function CourseCard({ course, onEdit }: CourseCardProps) {
             {course.courseName}
           </div>
           <div className="text-sm text-muted-foreground">
-            {course.deptCode} {course.courseCode}
-          </div>
-          <div className="text-sm font-medium mt-1">
-            Credits: {course.credits}
+            {course.deptCode} {course.courseCode} - {course.credits}
           </div>
         </div>
         

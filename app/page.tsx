@@ -3,7 +3,6 @@
 import { useState } from "react";
 import TopBar from "./TopBar";
 import CoursesSection from "./components/CoursesSection";
-import InstallBanner from "./components/InstallBanner";
 import { CGPAProvider } from '@/contexts/CGPAContext';
 
 export default function Home() {
@@ -11,7 +10,6 @@ export default function Home() {
     <>
       <div className="mobile-only min-h-screen bg-background">
         <CGPAProvider>
-          <InstallBanner />
           <TopBar />
           <CoursesSection />
         </CGPAProvider>

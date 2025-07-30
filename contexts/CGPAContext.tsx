@@ -11,6 +11,7 @@ interface CourseGrade {
   credits: number;
   grade: string;
   gradePoints: number;
+  isDuplicate?: boolean; 
 }
 
 interface SemesterData {
@@ -46,8 +47,15 @@ const initialState: CGPAState = {
 
 const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
   switch (action.type) {
-    case 'SET_CURRENT_SEMESTER':
-      return { ...state, currentSemester: action.payload };
+    case 'SET_CURRENT_SEMESTER': {
+      const newState = { ...state, currentSemester: action.payload };
+      // Recalculate SGPA for the new current semester
+      return {
+        ...newState,
+        sgpa: calculateSGPA(newState.semesters[action.payload]?.courses || []),
+        currentSemesterCredits: calculateSemesterCredits(newState.semesters[action.payload]?.courses || []),
+      };
+    }
       
     case 'ADD_COURSE': {
       const { semesterCode, course } = action.payload;
@@ -115,8 +123,24 @@ const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
       };
     }
     
-    case 'LOAD_FROM_STORAGE':
-      return { ...state, ...action.payload };
+    case 'LOAD_FROM_STORAGE': {
+      // Ensure we use the loaded currentSemester or fallback to initialState
+      const loadedState = { 
+        ...initialState,  // Start with initial state
+        ...action.payload,  // Override with loaded data
+        // Ensure currentSemester is properly loaded
+        currentSemester: action.payload.currentSemester || initialState.currentSemester
+      };
+      
+      // Recalculate values after loading from storage
+      return {
+        ...loadedState,
+        sgpa: calculateSGPA(loadedState.semesters[loadedState.currentSemester]?.courses || []),
+        cgpa: calculateCGPA(loadedState.semesters),
+        currentSemesterCredits: calculateSemesterCredits(loadedState.semesters[loadedState.currentSemester]?.courses || []),
+        totalCredits: calculateTotalCredits(loadedState.semesters),
+      };
+    }
       
     case 'RECALCULATE':
       return {
@@ -139,19 +163,26 @@ const CGPAContext = createContext<{
 
 export const CGPAProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cgpaReducer, initialState);
+  const [isLoaded, setIsLoaded] = React.useState(false);
   
   // Load data from localStorage on mount
   useEffect(() => {
     const savedData = loadFromStorage('cgpa-data', {});
+    console.log('Loading from storage:', savedData); // Debug log
+    
     if (Object.keys(savedData).length > 0) {
       dispatch({ type: 'LOAD_FROM_STORAGE', payload: savedData });
     }
+    setIsLoaded(true);
   }, []);
   
-  // Save to localStorage whenever state changes
+  // Save to localStorage whenever state changes (but only after initial load)
   useEffect(() => {
-    saveToStorage('cgpa-data', state);
-  }, [state]);
+    if (isLoaded) {
+      console.log('Saving to storage:', state); // Debug log
+      saveToStorage('cgpa-data', state);
+    }
+  }, [state, isLoaded]);
   
   return (
     <CGPAContext.Provider value={{ state, dispatch }}>
