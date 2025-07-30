@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'CGPA Calculator',
     short_name: 'CGPA Calc',
-    description: 'Calculate your CGPA and SGPA offline',
+    description: 'Calculate your CGPA and SGPA',
     id: '/',
     start_url: '/',
     display: 'standalone',

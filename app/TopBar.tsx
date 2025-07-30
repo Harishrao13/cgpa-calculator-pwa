@@ -23,7 +23,7 @@ export default function TopBar() {
     <div className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 space-y-3">
       {/* First Row - Combobox and Settings */}
       <div className="flex justify-between items-center">
-        <Select defaultValue="sem1" onValueChange={handleSemesterChange}>
+        <Select value={state.currentSemester} onValueChange={handleSemesterChange}>
           <SelectTrigger className="font-bold">
             <SelectValue placeholder="Select Semester" />
           </SelectTrigger>
@@ -60,7 +60,7 @@ export default function TopBar() {
           <span className="text-xs text-gray-500 dark:text-gray-500 font-medium">
             SGPA
           </span>
-          <span className="text-3xl font-bold text-black dark:text-blue-400">
+          <span className="text-3xl font-bold text-black dark:text-white transition-colors">
             {state.sgpa.toFixed(2)}
           </span>
         </div>
@@ -69,7 +69,7 @@ export default function TopBar() {
           <span className="text-xs text-gray-500 dark:text-gray-500 font-medium">
             CGPA
           </span>
-          <span className="text-3xl font-bold text-black dark:text-green-400">
+          <span className="text-3xl font-bold text-black dark:text-white transition-colors">
             {state.cgpa.toFixed(2)}
           </span>
         </div>
