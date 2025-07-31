@@ -152,7 +152,6 @@ export default function AddCourseModal({
             // Update the previous course to mark it as duplicate
             onUpdateCourse(updatedDuplicateCourse);
             
-            console.log(`Marking previous course ${selectedDept} ${selectedCourseCode} in ${duplicate.semesterCode} as duplicate`);
           } else {
             // Current semester is earlier, don't add this course
             alert(`Course ${selectedDept} ${selectedCourseCode} already exists in a later semester (${duplicate.semesterCode}). Cannot add to an earlier semester.`);

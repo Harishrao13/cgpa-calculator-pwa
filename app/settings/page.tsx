@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Bug, Plus, Github, ExternalLink, Palette } from 'lucide-react'
 import {
@@ -10,39 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCGPA } from '@/contexts/CGPAContext';
 
 const Settings = () => {
-  const [theme, setTheme] = useState('system');
+  const { state, dispatch } = useCGPA();
 
-  // Load theme from localStorage on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    setTheme(savedTheme);
-    applyTheme(savedTheme);
-  }, []);
-
-  const applyTheme = (selectedTheme: string) => {
-    const root = window.document.documentElement;
-    
-    if (selectedTheme === 'dark') {
-      root.classList.add('dark');
-    } else if (selectedTheme === 'light') {
-      root.classList.remove('dark');
-    } else {
-      // System theme
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (systemDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    }
-  };
-
-  const handleThemeChange = (selectedTheme: string) => {
-    setTheme(selectedTheme);
-    localStorage.setItem('theme', selectedTheme);
-    applyTheme(selectedTheme);
+  const handleThemeChange = (selectedTheme: 'light' | 'dark' | 'system') => {
+    dispatch({ type: 'SET_THEME', payload: selectedTheme });
   };
 
   const bugReportUrl = "https://github.com/Harishrao13/cgpa-calculator-pwa/issues/new?" + 
@@ -117,7 +91,7 @@ Provide a link to the official course curriculum or syllabus if available.`,
                     <div className="text-sm text-gray-600 dark:text-gray-400">Choose app appearance</div>
                   </div>
                 </div>
-                <Select value={theme} onValueChange={handleThemeChange}>
+                <Select value={state.theme} onValueChange={handleThemeChange}>
                   <SelectTrigger className="w-24">
                     <SelectValue />
                   </SelectTrigger>

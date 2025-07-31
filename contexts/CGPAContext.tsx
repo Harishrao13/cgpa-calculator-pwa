@@ -22,6 +22,7 @@ interface SemesterData {
 interface CGPAState {
   semesters: { [semesterCode: string]: SemesterData };
   currentSemester: string;
+  theme: 'light' | 'dark' | 'system';
   sgpa: number;
   cgpa: number;
   currentSemesterCredits: number;
@@ -30,6 +31,7 @@ interface CGPAState {
 
 type CGPAAction = 
   | { type: 'SET_CURRENT_SEMESTER'; payload: string }
+  | { type: 'SET_THEME'; payload: 'light' | 'dark' | 'system' }
   | { type: 'ADD_COURSE'; payload: { semesterCode: string; course: CourseGrade } }
   | { type: 'UPDATE_COURSE'; payload: { semesterCode: string; course: CourseGrade } }
   | { type: 'DELETE_COURSE'; payload: { semesterCode: string; courseId: number } }
@@ -39,22 +41,51 @@ type CGPAAction =
 const initialState: CGPAState = {
   semesters: {},
   currentSemester: 'sem1',
+  theme: 'system',
   sgpa: 0,
   cgpa: 0,
   currentSemesterCredits: 0,
   totalCredits: 0,
 };
 
+// Theme utility functions
+const applyTheme = (selectedTheme: 'light' | 'dark' | 'system') => {
+  if (typeof window === 'undefined') return;
+  
+  const root = window.document.documentElement;
+  
+  if (selectedTheme === 'dark') {
+    root.classList.add('dark');
+  } else if (selectedTheme === 'light') {
+    root.classList.remove('dark');
+  } else {
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (systemDark) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }
+};
+
 const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
   switch (action.type) {
     case 'SET_CURRENT_SEMESTER': {
       const newState = { ...state, currentSemester: action.payload };
-      // Recalculate SGPA for the new current semester
       return {
         ...newState,
         sgpa: calculateSGPA(newState.semesters[action.payload]?.courses || []),
         currentSemesterCredits: calculateSemesterCredits(newState.semesters[action.payload]?.courses || []),
       };
+    }
+
+    case 'SET_THEME': {
+      applyTheme(action.payload);
+      const newState = {
+        ...state,
+        theme: action.payload
+      };
+      return newState;
     }
       
     case 'ADD_COURSE': {
@@ -124,13 +155,14 @@ const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
     }
     
     case 'LOAD_FROM_STORAGE': {
-      // Ensure we use the loaded currentSemester or fallback to initialState
       const loadedState = { 
-        ...initialState,  // Start with initial state
-        ...action.payload,  // Override with loaded data
-        // Ensure currentSemester is properly loaded
-        currentSemester: action.payload.currentSemester || initialState.currentSemester
+        ...initialState,  
+        ...action.payload,  
+        currentSemester: action.payload.currentSemester || initialState.currentSemester,
+        theme: action.payload.theme || initialState.theme
       };
+      
+      applyTheme(loadedState.theme);
       
       // Recalculate values after loading from storage
       return {
@@ -165,24 +197,34 @@ export const CGPAProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [state, dispatch] = useReducer(cgpaReducer, initialState);
   const [isLoaded, setIsLoaded] = React.useState(false);
   
-  // Load data from localStorage on mount
   useEffect(() => {
     const savedData = loadFromStorage('cgpa-data', {});
-    console.log('Loading from storage:', savedData); // Debug log
     
     if (Object.keys(savedData).length > 0) {
       dispatch({ type: 'LOAD_FROM_STORAGE', payload: savedData });
+    } else {
+      applyTheme('system');
     }
     setIsLoaded(true);
   }, []);
   
-  // Save to localStorage whenever state changes (but only after initial load)
   useEffect(() => {
     if (isLoaded) {
-      console.log('Saving to storage:', state); // Debug log
       saveToStorage('cgpa-data', state);
     }
   }, [state, isLoaded]);
+
+  useEffect(() => {
+    if (state.theme === 'system' && typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        applyTheme('system');
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [state.theme]);
   
   return (
     <CGPAContext.Provider value={{ state, dispatch }}>

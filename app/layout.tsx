@@ -4,13 +4,17 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'CGPA Calculator',
-  description: 'Calculate your CGPA and SGPA',
+  description: 'Calculate your CGPA and SGPA offline',
   generator: 'Next.js',
   keywords: ['nextjs', 'pwa', 'cgpa', 'calculator'],
-  icons: [
-    { rel: 'apple-touch-icon', url: '/icon-192x192.png' },
-    { rel: 'icon', url: '/icon-192x192.png' },
-  ],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/icon-192x192.png',
+  },
 }
 
 export const viewport: Viewport = {
@@ -31,10 +35,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
       <body>
         <CGPAProvider>
           {children}

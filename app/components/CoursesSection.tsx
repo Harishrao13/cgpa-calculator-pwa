@@ -33,6 +33,12 @@ export default function CoursesSection() {
     });
   };
 
+  const handleSetTheme = (theme: 'light' | 'dark') => {
+    dispatch({ 
+      type: 'SET_THEME',
+      payload: theme });
+  };
+
   const handleUpdateCourse = (updatedCourse: Course) => {
     dispatch({ 
       type: 'UPDATE_COURSE', 
