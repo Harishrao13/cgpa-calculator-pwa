@@ -1,7 +1,22 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { calculateSGPA, calculateCGPA, calculateSemesterCredits, calculateTotalCredits, saveToStorage, loadFromStorage } from '@/lib/utils';
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  Dispatch,
+} from "react";
+
+import {
+  calculateSGPA,
+  calculateCGPA,
+  calculateSemesterCredits,
+  calculateTotalCredits,
+  saveToStorage,
+  loadFromStorage,
+} from "@/lib/utils";
 
 interface CourseGrade {
   id: number;
@@ -11,7 +26,7 @@ interface CourseGrade {
   credits: number;
   grade: string;
   gradePoints: number;
-  isDuplicate?: boolean; 
+  isDuplicate?: boolean;
 }
 
 interface SemesterData {
@@ -20,222 +35,183 @@ interface SemesterData {
 }
 
 interface CGPAState {
-  semesters: { [semesterCode: string]: SemesterData };
+  semesters: Record<string, SemesterData>;
   currentSemester: string;
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
+
   sgpa: number;
   cgpa: number;
   currentSemesterCredits: number;
   totalCredits: number;
 }
 
-type CGPAAction = 
-  | { type: 'SET_CURRENT_SEMESTER'; payload: string }
-  | { type: 'SET_THEME'; payload: 'light' | 'dark' | 'system' }
-  | { type: 'ADD_COURSE'; payload: { semesterCode: string; course: CourseGrade } }
-  | { type: 'UPDATE_COURSE'; payload: { semesterCode: string; course: CourseGrade } }
-  | { type: 'DELETE_COURSE'; payload: { semesterCode: string; courseId: number } }
-  | { type: 'LOAD_FROM_STORAGE'; payload: Partial<CGPAState> }
-  | { type: 'RECALCULATE' };
+type CGPAAction =
+  | { type: "SET_CURRENT_SEMESTER"; payload: string }
+  | { type: "SET_THEME"; payload: "light" | "dark" | "system" }
+  | { type: "ADD_COURSE"; payload: { semesterCode: string; course: CourseGrade } }
+  | { type: "UPDATE_COURSE"; payload: { semesterCode: string; course: CourseGrade } }
+  | { type: "DELETE_COURSE"; payload: { semesterCode: string; courseId: number } }
+  | { type: "UPDATE_COURSE_GLOBAL"; payload: CourseGrade } // NEW
+  | { type: "LOAD_FROM_STORAGE"; payload: Partial<CGPAState> }
+  | { type: "RECALCULATE" };
 
 const initialState: CGPAState = {
   semesters: {},
-  currentSemester: 'sem1',
-  theme: 'system',
+  currentSemester: "sem1",
+  theme: "system",
   sgpa: 0,
   cgpa: 0,
   currentSemesterCredits: 0,
   totalCredits: 0,
 };
 
-const applyTheme = (selectedTheme: 'light' | 'dark' | 'system') => {
-  if (typeof window === 'undefined') return;
-  
-  const root = window.document.documentElement;
-  
-  if (selectedTheme === 'dark') {
-    root.classList.add('dark');
-  } else if (selectedTheme === 'light') {
-    root.classList.remove('dark');
-  } else {
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (systemDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+const applyTheme = (selected: "light" | "dark" | "system") => {
+  if (typeof window === "undefined") return;
+
+  const root = document.documentElement;
+  if (selected === "dark") root.classList.add("dark");
+  else if (selected === "light") root.classList.remove("dark");
+  else {
+    const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    preferDark ? root.classList.add("dark") : root.classList.remove("dark");
   }
 };
 
+const recalc = (draft: CGPAState): CGPAState => ({
+  ...draft,
+  sgpa: calculateSGPA(
+    draft.semesters[draft.currentSemester]?.courses || []
+  ),
+  cgpa: calculateCGPA(draft.semesters),
+  currentSemesterCredits: calculateSemesterCredits(
+    draft.semesters[draft.currentSemester]?.courses || []
+  ),
+  totalCredits: calculateTotalCredits(draft.semesters),
+});
+
 const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
   switch (action.type) {
-    case 'SET_CURRENT_SEMESTER': {
-      const newState = { ...state, currentSemester: action.payload };
-      return {
-        ...newState,
-        sgpa: calculateSGPA(newState.semesters[action.payload]?.courses || []),
-        currentSemesterCredits: calculateSemesterCredits(newState.semesters[action.payload]?.courses || []),
-      };
+    case "SET_CURRENT_SEMESTER": {
+      const next = { ...state, currentSemester: action.payload };
+      return recalc(next);
     }
 
-    case 'SET_THEME': {
+    case "SET_THEME": {
       applyTheme(action.payload);
-      const newState = {
-        ...state,
-        theme: action.payload
-      };
-      return newState;
+      return { ...state, theme: action.payload };
     }
-      
-    case 'ADD_COURSE': {
+
+    case "ADD_COURSE": {
       const { semesterCode, course } = action.payload;
-      const updatedSemesters = {
+      const courses = [
+        ...(state.semesters[semesterCode]?.courses || []),
+        course,
+      ];
+      const semesters = {
         ...state.semesters,
-        [semesterCode]: {
-          semesterCode,
-          courses: [...(state.semesters[semesterCode]?.courses || []), course]
-        }
+        [semesterCode]: { semesterCode, courses },
       };
-      
-      return {
-        ...state,
-        semesters: updatedSemesters,
-        sgpa: calculateSGPA(updatedSemesters[state.currentSemester]?.courses || []),
-        cgpa: calculateCGPA(updatedSemesters),
-        currentSemesterCredits: calculateSemesterCredits(updatedSemesters[state.currentSemester]?.courses || []),
-        totalCredits: calculateTotalCredits(updatedSemesters),
-      };
+      return recalc({ ...state, semesters });
     }
-    
-    case 'UPDATE_COURSE': {
+
+    case "UPDATE_COURSE": {
       const { semesterCode, course } = action.payload;
-      const semesterCourses = state.semesters[semesterCode]?.courses || [];
-      const updatedCourses = semesterCourses.map(c => c.id === course.id ? course : c);
-      
-      const updatedSemesters = {
+      const courses = (state.semesters[semesterCode]?.courses || []).map((c) =>
+        c.id === course.id ? course : c
+      );
+      const semesters = {
         ...state.semesters,
-        [semesterCode]: {
-          semesterCode,
-          courses: updatedCourses
-        }
+        [semesterCode]: { semesterCode, courses },
       };
-      
-      return {
-        ...state,
-        semesters: updatedSemesters,
-        sgpa: calculateSGPA(updatedSemesters[state.currentSemester]?.courses || []),
-        cgpa: calculateCGPA(updatedSemesters),
-        currentSemesterCredits: calculateSemesterCredits(updatedSemesters[state.currentSemester]?.courses || []),
-        totalCredits: calculateTotalCredits(updatedSemesters),
-      };
+      return recalc({ ...state, semesters });
     }
-    
-    case 'DELETE_COURSE': {
+
+    case "UPDATE_COURSE_GLOBAL": {
+      const updated = action.payload;
+      const semesters = { ...state.semesters };
+
+      for (const sem of Object.values(semesters)) {
+        const idx = sem.courses.findIndex((c) => c.id === updated.id);
+        if (idx !== -1) {
+          sem.courses[idx] = updated;
+          break;
+        }
+      }
+      return recalc({ ...state, semesters });
+    }
+
+    case "DELETE_COURSE": {
       const { semesterCode, courseId } = action.payload;
-      const semesterCourses = state.semesters[semesterCode]?.courses || [];
-      const updatedCourses = semesterCourses.filter(c => c.id !== courseId);
-      
-      const updatedSemesters = {
+      const courses = (state.semesters[semesterCode]?.courses || []).filter(
+        (c) => c.id !== courseId
+      );
+      const semesters = {
         ...state.semesters,
-        [semesterCode]: {
-          semesterCode,
-          courses: updatedCourses
-        }
+        [semesterCode]: { semesterCode, courses },
       };
-      
-      return {
-        ...state,
-        semesters: updatedSemesters,
-        sgpa: calculateSGPA(updatedSemesters[state.currentSemester]?.courses || []),
-        cgpa: calculateCGPA(updatedSemesters),
-        currentSemesterCredits: calculateSemesterCredits(updatedSemesters[state.currentSemester]?.courses || []),
-        totalCredits: calculateTotalCredits(updatedSemesters),
-      };
+      return recalc({ ...state, semesters });
     }
-    
-    case 'LOAD_FROM_STORAGE': {
-      const loadedState = { 
-        ...initialState,  
-        ...action.payload,  
-        currentSemester: action.payload.currentSemester || initialState.currentSemester,
-        theme: action.payload.theme || initialState.theme
-      };
-      
-      applyTheme(loadedState.theme);
-      
-      // Recalculate values after loading from storage
-      return {
-        ...loadedState,
-        sgpa: calculateSGPA(loadedState.semesters[loadedState.currentSemester]?.courses || []),
-        cgpa: calculateCGPA(loadedState.semesters),
-        currentSemesterCredits: calculateSemesterCredits(loadedState.semesters[loadedState.currentSemester]?.courses || []),
-        totalCredits: calculateTotalCredits(loadedState.semesters),
-      };
+
+    case "LOAD_FROM_STORAGE": {
+      const loaded = { ...initialState, ...action.payload };
+      applyTheme(loaded.theme);
+      return recalc(loaded as CGPAState);
     }
-      
-    case 'RECALCULATE':
-      return {
-        ...state,
-        sgpa: calculateSGPA(state.semesters[state.currentSemester]?.courses || []),
-        cgpa: calculateCGPA(state.semesters),
-        currentSemesterCredits: calculateSemesterCredits(state.semesters[state.currentSemester]?.courses || []),
-        totalCredits: calculateTotalCredits(state.semesters),
-      };
-      
+
+    case "RECALCULATE":
+      return recalc(state);
+
     default:
       return state;
   }
 };
 
-const CGPAContext = createContext<{
+interface CGPAContextShape {
   state: CGPAState;
-  dispatch: React.Dispatch<CGPAAction>;
-} | null>(null);
+  dispatch: Dispatch<CGPAAction>;
+  updateCourseGlobal: (course: CourseGrade) => void;
+}
 
-export const CGPAProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const CGPAContext = createContext<CGPAContextShape | null>(null);
+
+export const CGPAProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(cgpaReducer, initialState);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  
-  useEffect(() => {
-    const savedData = loadFromStorage('cgpa-data', {});
-    
-    if (Object.keys(savedData).length > 0) {
-      dispatch({ type: 'LOAD_FROM_STORAGE', payload: savedData });
-    } else {
-      applyTheme('system');
-    }
-    setIsLoaded(true);
-  }, []);
-  
-  useEffect(() => {
-    if (isLoaded) {
-      saveToStorage('cgpa-data', state);
-    }
-  }, [state, isLoaded]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (state.theme === 'system' && typeof window !== 'undefined') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        applyTheme('system');
-      };
-      
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
+    const saved = loadFromStorage("cgpa-data", {});
+    if (Object.keys(saved).length) {
+      dispatch({ type: "LOAD_FROM_STORAGE", payload: saved });
+    } else applyTheme("system");
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (ready) saveToStorage("cgpa-data", state);
+  }, [state, ready]);
+
+  useEffect(() => {
+    if (state.theme !== "system" || typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = () => applyTheme("system");
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, [state.theme]);
-  
+
+  const updateCourseGlobal = (course: CourseGrade) =>
+    dispatch({ type: "UPDATE_COURSE_GLOBAL", payload: course });
+
   return (
-    <CGPAContext.Provider value={{ state, dispatch }}>
+    <CGPAContext.Provider value={{ state, dispatch, updateCourseGlobal }}>
       {children}
     </CGPAContext.Provider>
   );
 };
 
 export const useCGPA = () => {
-  const context = useContext(CGPAContext);
-  if (!context) {
-    throw new Error('useCGPA must be used within CGPAProvider');
-  }
-  return context;
+  const ctx = useContext(CGPAContext);
+  if (!ctx) throw new Error("useCGPA must be used within CGPAProvider");
+  return ctx;
 };
