@@ -66,7 +66,7 @@ export const gradesList = [
   "D",
   "E",
   "NC",
-  "CLR",
+  "NA",
   "GD",
 ] as const;
 
@@ -347,6 +347,71 @@ export const compulsoryCoursesList: CompulsoryCourse[] = [
     cdcList: [],
     delList: [],
   },
+  {
+    courseCode: 'MATH',
+    courseID: 'F101',
+    courseTitle: 'Multivariable Calculus',
+    courseCredits: '3',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'MATH',
+    courseID: 'F102',
+    courseTitle: 'Linear Algebra and Complex Variables',
+    courseCredits: '3',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'BITS',
+    courseID: 'K101',
+    courseTitle: 'Physical Fitness, Health Well-being and Creativity',
+    courseCredits: '1',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'BIO',
+    courseID: 'F101',
+    courseTitle: 'Introduction to Biological Sciences',
+    courseCredits: '3',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'PHY',
+    courseID: 'F101',
+    courseTitle: 'Oscillations and Waves ',
+    courseCredits: '3',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'CHEM',
+    courseID: 'F101',
+    courseTitle: 'Fundamentals of Chemistry',
+    courseCredits: '3',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'BITS',
+    courseID: 'F101',
+    courseTitle: 'Navigating Campus Life and Living Well',
+    courseCredits: '1',
+    cdcList: [],
+    delList: [],
+  },
+  {
+    courseCode: 'BITS',
+    courseID: 'F102',
+    courseTitle: 'Innovation and Design Thinking',
+    courseCredits: '1',
+    cdcList: [],
+    delList: [],
+  },
+
 ];
 
 export const coursesDatabase: CoursesDatabase = compulsoryCoursesList.reduce((acc, course) => {
@@ -371,12 +436,11 @@ export const gradeOptions: GradeOption[] = [
   { value: 'C-', points: 5 },
   { value: 'D', points: 4 },
   { value: 'E', points: 2 },
-  { value: 'NC', points: 0 }, 
-  { value: 'CLR', points: 0 }, 
-  { value: 'GD', points: 0 },
+  { value: 'NC', points: -1 }, 
+  { value: 'NA', points: -1 }, 
+  { value: 'GD', points: -1 },
 ];
 
-// Helper functions with proper typing
 export const getCoursesByDepartment = (deptCode: string): { [courseID: string]: CourseDetails } => {
   return coursesDatabase[deptCode] || {};
 };

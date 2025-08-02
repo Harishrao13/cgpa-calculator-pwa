@@ -28,29 +28,35 @@ interface CGPAData {
 }
 
 export const calculateSGPA = (courses: CourseGrade[]): number => {
-  if (courses.length === 0) return 0;
+  const validCourses = courses.filter(course => 
+    !course.isDuplicate && course.gradePoints > 0
+  );
   
-  const totalQualityPoints = courses.reduce((sum, course) => {
-    return sum + (course.credits * course.gradePoints);
-  }, 0);
+  if (validCourses.length === 0) return 0;
   
-  const totalCredits = courses.reduce((sum, course) => {
-    return sum + course.credits;
-  }, 0);
+  const totalPoints = validCourses.reduce((sum, course) => 
+    sum + (course.credits * course.gradePoints), 0
+  );
+  const totalCredits = validCourses.reduce((sum, course) => 
+    sum + course.credits, 0
+  );
   
-  return totalCredits > 0 ? Number((totalQualityPoints / totalCredits).toFixed(2)) : 0;
+  return totalCredits > 0 ? totalPoints / totalCredits : 0;
 };
 
 export const calculateCGPA = (semesterData: { [key: string]: SemesterData }): number => {
-  const allCourses: CourseGrade[] = [];
+  const allValidCourses: CourseGrade[] = [];
   
   Object.values(semesterData).forEach(semester => {
-    const validCourses = semester.courses.filter(course => !course.isDuplicate);
-    allCourses.push(...validCourses);
+    const validCourses = semester.courses.filter(course => 
+      !course.isDuplicate && course.grade !== 'GD' && course.grade !== 'NA'
+    );
+    allValidCourses.push(...validCourses);
   });
   
-  return calculateSGPA(allCourses);
+  return calculateSGPA(allValidCourses);
 };
+
 
 export const calculateSemesterCredits = (courses: CourseGrade[]): number => {
   return courses.reduce((sum, course) => sum + course.credits, 0);
@@ -66,6 +72,7 @@ export const calculateTotalCredits = (semesterData: { [key: string]: SemesterDat
   
   return totalCredits;
 };
+
 
 export const saveToStorage = (key: string, data: any): void => {
   try {
