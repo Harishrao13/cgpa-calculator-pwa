@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'CGPA Calculator',
-  description: 'Calculate your CGPA and SGPA offline',
+  description: 'Calculate your CGPA and SGPA',
   generator: 'Next.js',
   keywords: ['nextjs', 'pwa', 'cgpa', 'calculator'],
   icons: {

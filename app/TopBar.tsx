@@ -60,7 +60,7 @@ export default function TopBar() {
           <span className="text-xs text-gray-500 dark:text-gray-500 font-medium">
             SGPA
           </span>
-          <span className="text-3xl font-bold text-black dark:text-white transition-colors">
+          <span className="text-3xl font-bold transition-colors text-black dark:text-white ">
             {state.sgpa.toFixed(2)}
           </span>
         </div>
@@ -81,7 +81,7 @@ export default function TopBar() {
           <span className="text-xs text-gray-500 dark:text-gray-500 font-medium">
             Credits
           </span>
-          <span className="text-lg font-bold text-gray-800 dark:text-gray-200">
+          <span className={`text-lg font-bold ${state.currentSemesterCredits > 25 ?  "text-red-500" : "text-gray-500 dark:text-gray-500"}`}>
             {state.currentSemesterCredits}
           </span>
         </div>
