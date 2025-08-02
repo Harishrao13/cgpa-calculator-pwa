@@ -81,7 +81,7 @@ export default function TopBar() {
           <span className="text-xs text-gray-500 dark:text-gray-500 font-medium">
             Credits
           </span>
-          <span className={`text-lg font-bold ${state.currentSemesterCredits > 25 ?  "text-red-500" : "text-gray-500 dark:text-gray-500"}`}>
+          <span className={`text-lg font-bold ${state.currentSemesterCredits > 25 ?  "text-red-500" : "text-gray-800 dark:text-gray-200"}`}>
             {state.currentSemesterCredits}
           </span>
         </div>

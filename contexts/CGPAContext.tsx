@@ -48,7 +48,6 @@ const initialState: CGPAState = {
   totalCredits: 0,
 };
 
-// Theme utility functions
 const applyTheme = (selectedTheme: 'light' | 'dark' | 'system') => {
   if (typeof window === 'undefined') return;
   

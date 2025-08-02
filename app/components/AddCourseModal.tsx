@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { courseCodeList, gradeOptions } from "@/lib/courseMetaData";
 import coursesData from "@/lib/courseData";
 import { useCGPA } from "@/contexts/CGPAContext";
+import SearchableCourseSelect from './SearchCourse'; 
 
 interface CourseData {
   deptCode: string;
@@ -30,7 +31,6 @@ interface CourseData {
   delList: string[];
 }
 
-// Type definitions for component state
 interface Course {
   id: number;
   deptCode: string;
@@ -72,15 +72,15 @@ export default function AddCourseModal({
   const [courseDetails, setCourseDetails] = useState<CourseDetails | null>(
     null
   );
+  const [selectedCourse, setSelectedCourse] = useState<CourseData | null>(null);
 
-  // Get available course codes for selected department
+
   const availableCourseCodes: string[] = selectedDept
     ? coursesData
         .filter((course: CourseData) => course.deptCode === selectedDept)
         .map((course: CourseData) => course.courseCode)
     : [];
 
-  // Function to check for duplicate courses across all semesters
   const findDuplicateCourse = (
     deptCode: string,
     courseCode: string
@@ -99,7 +99,6 @@ export default function AddCourseModal({
     return null;
   };
 
-  // Function to get semester priority (lower number = later semester)
   const getSemesterPriority = (semesterCode: string): number => {
     const priorities: { [key: string]: number } = {
       sem1: 1,
@@ -120,13 +119,21 @@ export default function AddCourseModal({
 
   // Populate form when editing
   useEffect(() => {
-    if (editingCourse) {
-      setSelectedDept(editingCourse.deptCode);
-      setSelectedCourseCode(editingCourse.courseCode);
-      setSelectedGrade(editingCourse.grade);
-      setIsOpen(true);
-    }
-  }, [editingCourse]);
+  if (editingCourse) {
+    setSelectedDept(editingCourse.deptCode);
+    setSelectedCourseCode(editingCourse.courseCode);
+    setSelectedGrade(editingCourse.grade);
+    
+    // Find and set the selected course for the search component
+    const course = coursesData.find(
+      (c: CourseData) => c.deptCode === editingCourse.deptCode && c.courseCode === editingCourse.courseCode
+    );
+    setSelectedCourse(course || null);
+    
+    setIsOpen(true);
+  }
+}, [editingCourse]);
+
 
   // Update course details when department and course code are selected
   useEffect(() => {
@@ -252,8 +259,6 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
   }
 };
 
-
-
   const handleDelete = (): void => {
     if (editingCourse) {
       onDeleteCourse(editingCourse.id);
@@ -265,6 +270,7 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
   const resetForm = (): void => {
     setSelectedDept("AN");
     setSelectedCourseCode("F311");
+    setSelectedCourse(null);
     setSelectedGrade("");
     setCourseDetails(null);
     onCancelEdit();
@@ -279,6 +285,19 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
     }
   };
 
+  const handleCourseSelect = (course: CourseData) => {
+  setSelectedCourse(course);
+  setSelectedDept(course.deptCode);
+  setSelectedCourseCode(course.courseCode);
+  setCourseDetails({
+    courseTitle: course.courseTitle,
+    courseCredits: course.courseCredits,
+    cdcList: course.cdcList,
+    delList: course.delList,
+  });
+};
+
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -292,107 +311,77 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex justify-between items-center">
-            {editingCourse ? "Edit Course" : "Add New Course"}
-          </DialogTitle>
-        </DialogHeader>
+  <DialogHeader>
+    <DialogTitle className="flex justify-between items-center">
+      {editingCourse ? "Edit Course" : "Add New Course"}
+    </DialogTitle>
+  </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="flex justify-between">
-            {/* Department Code Selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Department Code</label>
-              <Select value={selectedDept} onValueChange={setSelectedDept}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select department" />
-                </SelectTrigger>
-                <SelectContent>
-                  {courseCodeList.map((dept: string) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+  <div className="space-y-4 py-4">
+    {/* Searchable Course Selection */}
+    <div className="space-y-2">
+      <label className="text-sm font-medium">Select Course</label>
+      <SearchableCourseSelect 
+        onCourseSelect={handleCourseSelect}
+        selectedCourse={selectedCourse}
+      />
+    </div>
 
-            {/* Course Code Selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Course Code</label>
-              <Select
-                value={selectedCourseCode}
-                onValueChange={setSelectedCourseCode}
-                disabled={!selectedDept}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select course code" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableCourseCodes.map((code: string) => (
-                    <SelectItem key={code} value={code}>
-                      {code}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+    {/* Grade Selection */}
+    <div className="space-y-2">
+      <label className="text-sm font-medium">Grade</label>
+      <Select value={selectedGrade} onValueChange={setSelectedGrade}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select grade" />
+        </SelectTrigger>
+        <SelectContent>
+          {gradeOptions.map((grade) => (
+            <SelectItem key={grade.value} value={grade.value}>
+              {grade.value}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-          {/* Grade Selection */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Grade</label>
-            <Select value={selectedGrade} onValueChange={setSelectedGrade}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select grade" />
-              </SelectTrigger>
-              <SelectContent>
-                {gradeOptions.map((grade) => (
-                  <SelectItem key={grade.value} value={grade.value}>
-                    {grade.value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Course Details Display */}
-          {courseDetails && (
-            <div className="bg-muted p-3 rounded-md space-y-1">
-              <div className="font-medium text-sm">
-                {courseDetails.courseTitle}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {selectedDept} {selectedCourseCode}
-              </div>
-              <div className="text-sm font-medium">
-                Credits: {courseDetails.courseCredits}
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex space-x-2 pt-4">
-            {editingCourse && (
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                className="flex-1"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </Button>
-            )}
-            <Button
-              onClick={handleSubmit}
-              disabled={!selectedDept || !selectedCourseCode || !selectedGrade}
-              className="flex-1"
-            >
-              {editingCourse ? "Update Course" : "Add Course"}
-            </Button>
-          </div>
+    {/* Course Details Display */}
+    {courseDetails && (
+      <div className="bg-muted p-3 rounded-md space-y-1">
+        <div className="font-medium text-sm">
+          {courseDetails.courseTitle}
         </div>
-      </DialogContent>
+        <div className="text-sm text-muted-foreground">
+          {selectedDept} {selectedCourseCode}
+        </div>
+        <div className="text-sm font-medium">
+          Credits: {courseDetails.courseCredits}
+        </div>
+      </div>
+    )}
+
+    {/* Action Buttons */}
+    <div className="flex space-x-2 pt-4">
+      {editingCourse && (
+        <Button
+          variant="destructive"
+          onClick={handleDelete}
+          className="flex-1"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete
+        </Button>
+      )}
+      <Button
+        onClick={handleSubmit}
+        disabled={!selectedCourse || !selectedGrade}
+        className="flex-1"
+      >
+        {editingCourse ? "Update Course" : "Add Course"}
+      </Button>
+    </div>
+  </div>
+</DialogContent>
+
     </Dialog>
   );
 }
