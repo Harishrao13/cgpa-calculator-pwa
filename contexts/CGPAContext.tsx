@@ -48,9 +48,18 @@ interface CGPAState {
 type CGPAAction =
   | { type: "SET_CURRENT_SEMESTER"; payload: string }
   | { type: "SET_THEME"; payload: "light" | "dark" | "system" }
-  | { type: "ADD_COURSE"; payload: { semesterCode: string; course: CourseGrade } }
-  | { type: "UPDATE_COURSE"; payload: { semesterCode: string; course: CourseGrade } }
-  | { type: "DELETE_COURSE"; payload: { semesterCode: string; courseId: number } }
+  | {
+      type: "ADD_COURSE";
+      payload: { semesterCode: string; course: CourseGrade };
+    }
+  | {
+      type: "UPDATE_COURSE";
+      payload: { semesterCode: string; course: CourseGrade };
+    }
+  | {
+      type: "DELETE_COURSE";
+      payload: { semesterCode: string; courseId: number };
+    }
   | { type: "UPDATE_COURSE_GLOBAL"; payload: CourseGrade } // NEW
   | { type: "LOAD_FROM_STORAGE"; payload: Partial<CGPAState> }
   | { type: "RECALCULATE" };
@@ -72,16 +81,16 @@ const applyTheme = (selected: "light" | "dark" | "system") => {
   if (selected === "dark") root.classList.add("dark");
   else if (selected === "light") root.classList.remove("dark");
   else {
-    const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const preferDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     preferDark ? root.classList.add("dark") : root.classList.remove("dark");
   }
 };
 
 const recalc = (draft: CGPAState): CGPAState => ({
   ...draft,
-  sgpa: calculateSGPA(
-    draft.semesters[draft.currentSemester]?.courses || []
-  ),
+  sgpa: calculateSGPA(draft.semesters[draft.currentSemester]?.courses || []),
   cgpa: calculateCGPA(draft.semesters),
   currentSemesterCredits: calculateSemesterCredits(
     draft.semesters[draft.currentSemester]?.courses || []
@@ -153,9 +162,15 @@ const cgpaReducer = (state: CGPAState, action: CGPAAction): CGPAState => {
     }
 
     case "LOAD_FROM_STORAGE": {
-      const loaded = { ...initialState, ...action.payload };
+      // Only merge the essential persisted data, ignore computed values
+      const loaded = {
+        ...initialState, // Start with clean initial state
+        semesters: action.payload.semesters || {},
+        currentSemester: action.payload.currentSemester || "sem1",
+        theme: action.payload.theme || "system",
+      };
       applyTheme(loaded.theme);
-      return recalc(loaded as CGPAState);
+      return recalc(loaded);
     }
 
     case "RECALCULATE":
@@ -189,8 +204,16 @@ export const CGPAProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (ready) saveToStorage("cgpa-data", state);
-  }, [state, ready]);
+  if (ready) {
+    const dataToSave = {
+      semesters: state.semesters,
+      currentSemester: state.currentSemester,
+      theme: state.theme,
+    };
+    saveToStorage("cgpa-data", dataToSave);
+  }
+}, [state.semesters, state.currentSemester, state.theme, ready]); 
+
 
   useEffect(() => {
     if (state.theme !== "system" || typeof window === "undefined") return;
