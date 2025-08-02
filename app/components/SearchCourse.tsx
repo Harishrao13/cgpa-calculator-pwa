@@ -16,9 +16,10 @@ interface CourseData {
 interface Props {
   onCourseSelect: (course: CourseData) => void;
   selectedCourse: CourseData | null;
+  editing?: boolean;
 }
 
-export default function SearchCourse({ onCourseSelect, selectedCourse }: Props) {
+export default function SearchCourse({ onCourseSelect, selectedCourse, editing = false }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCourses, setFilteredCourses] = useState<CourseData[]>(coursesData);
 
@@ -54,12 +55,11 @@ export default function SearchCourse({ onCourseSelect, selectedCourse }: Props) 
       setSearchTerm(e.target.value);
       searchCourses(e.target.value);
     }}
+    autoFocus={!editing}
     placeholder={selectedCourse ? "" : "Search courses..."}
     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
   />
 </div>
-
-
 
       {searchTerm && (
         <div className="absolute top-full left-0 right-0 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50 z-50 mt-1">

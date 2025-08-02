@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { courseCodeList, gradeOptions } from "@/lib/courseMetaData";
 import coursesData from "@/lib/courseData";
 import { useCGPA } from "@/contexts/CGPAContext";
-import SearchableCourseSelect from './SearchCourse'; 
+import SearchCourse from './SearchCourse'; 
 
 interface CourseData {
   deptCode: string;
@@ -310,7 +310,7 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" onOpenAutoFocus={editingCourse ? (e) => e.preventDefault() : undefined}>
   <DialogHeader>
     <DialogTitle className="flex justify-between items-center">
       {editingCourse ? "Edit Course" : "Add New Course"}
@@ -321,9 +321,10 @@ const handleDuplicatePriority = (duplicate: { course: Course; semesterCode: stri
     {/* Searchable Course Selection */}
     <div className="space-y-2">
       <label className="text-sm font-medium">Select Course</label>
-      <SearchableCourseSelect 
+      <SearchCourse 
         onCourseSelect={handleCourseSelect}
         selectedCourse={selectedCourse}
+        editing={editingCourse !== null}
       />
     </div>
 
