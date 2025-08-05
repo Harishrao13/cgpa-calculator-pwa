@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { CGPAProvider } from '@/contexts/CGPAContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -36,9 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+      <ThemeProvider>
         <CGPAProvider>
           {children}
         </CGPAProvider>
+      </ThemeProvider>
       </body>
     </html>
   )

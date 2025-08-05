@@ -11,13 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCGPA } from '@/contexts/CGPAContext';
+import { useTheme } from '@/contexts/ThemeContext'
 
 const Settings = () => {
-  const { state, dispatch } = useCGPA();
-
-  const handleThemeChange = (selectedTheme: 'light' | 'dark' | 'system') => {
-    dispatch({ type: 'SET_THEME', payload: selectedTheme });
-  };
+  const { state } = useCGPA();
+  const { theme, setTheme } = useTheme();
 
   const bugReportUrl = "https://github.com/Harishrao13/cgpa-calculator-pwa/issues/new?" + 
     new URLSearchParams({
@@ -91,7 +89,7 @@ Provide a link to the official course curriculum or syllabus if available.`,
                     <div className="text-sm text-gray-600 dark:text-gray-400">Choose app appearance</div>
                   </div>
                 </div>
-                <Select value={state.theme} onValueChange={handleThemeChange}>
+                <Select value={theme} onValueChange={setTheme}>
                   <SelectTrigger className="w-24">
                     <SelectValue />
                   </SelectTrigger>
