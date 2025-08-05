@@ -52,6 +52,11 @@ interface AddCourseModalProps {
   onCancelEdit: () => void;
 }
 
+interface DuplicateCandidate {
+  course: Course;
+  semesterCode: string;
+}
+
 export default function AddCourseModal({
   onAddCourse,
   onUpdateCourse,
@@ -98,9 +103,6 @@ export default function AddCourseModal({
     return priorities[semesterCode] ?? 999;
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  set form values when editing                                      */
-  /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!editingCourse) return;
 
@@ -202,11 +204,34 @@ const handleDuplicatePriority = (
 
 
   const handleDelete = () => {
-    if (!editingCourse) return;
-    onDeleteCourse(editingCourse.id);
-    resetForm();
-    setIsOpen(false);
-  };
+  if (!editingCourse) return;
+
+  if (!editingCourse.isDuplicate) {
+    let candidates : DuplicateCandidate[] = [] ;
+    Object.values(state.semesters).forEach(sem => {
+      sem.courses.forEach(course => {
+        if (
+          course.deptCode === editingCourse.deptCode &&
+          course.courseCode === editingCourse.courseCode &&
+          course.isDuplicate
+        ) {
+          candidates.push({ course, semesterCode: sem.semesterCode });
+        }
+      });
+    });
+    if (candidates.length > 0) {
+      candidates.sort((a, b) =>
+        getSemesterPriority(b.semesterCode) - getSemesterPriority(a.semesterCode)
+      );
+      const { course: toPromote } = candidates[0];
+      updateCourseGlobal({ ...toPromote, isDuplicate: false });
+    }
+  }
+
+  onDeleteCourse(editingCourse.id);
+  resetForm();
+  setIsOpen(false);
+};
 
   const handleCourseSelect = (course: CourseData) => {
     setSelectedCourse(course);
