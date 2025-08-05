@@ -3355,6 +3355,14 @@ const coursesData: Course[] = [
   },
   {
     deptCode: "ECE",
+    courseCode: "F331",
+    courseTitle: "Microwave Engineering",
+    courseCredits: 4,
+    cdcList: ["AA"],
+    delList: ["A8"],
+  },
+  {
+    deptCode: "ECE",
     courseCode: "F341",
     courseTitle: "Analog Electronics",
     courseCredits: 4,
@@ -4940,7 +4948,7 @@ const coursesData: Course[] = [
   {
     deptCode: "HSS",
     courseCode: "F331",
-    courseTitle: " Sankara’s Thoughts",
+    courseTitle: " Sankara's Thoughts",
     courseCredits: 3,
     cdcList: [],
     delList: [],
