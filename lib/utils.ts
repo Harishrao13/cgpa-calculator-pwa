@@ -49,7 +49,7 @@ export const calculateCGPA = (semesterData: { [key: string]: SemesterData }): nu
   
   Object.values(semesterData).forEach(semester => {
     const validCourses = semester.courses.filter(course => 
-      !course.isDuplicate && course.grade !== 'GD' && course.grade !== 'NA'
+      !course.isDuplicate && course.grade !== 'GD' && course.grade !== 'NA' && course.grade !== 'NC'
     );
     allValidCourses.push(...validCourses);
   });
