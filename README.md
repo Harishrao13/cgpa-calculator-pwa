@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CGPA Calculator
 
-## Getting Started
+CGPA Calculator PWA is a progressive web app to help students log semester-wise courses, credits, and grades to automatically compute SGPA and CGPA. Add, update, or remove courses as you go.
 
-First, run the development server:
+![Light Theme](./images/light_theme.jpg)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Dark Theme](./images/dark_theme.jpg)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This CGPA Calculator is a PWA (Progressive Web App), which means you can install it on your mobile device just like a native app. Updates roll out automatically.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Android
 
-## Learn More
+Open the app in Chrome or any Chromium-based browser (like Brave).
 
-To learn more about Next.js, take a look at the following resources:
+You will see an ``Install`` button in the browser address bar or in the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Works best on Chrome 80+ with automatic install prompt.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### iOS
 
-## Deploy on Vercel
+Installing on iOS (Safari only):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open the app in Safari.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tap the Share icon (bottom center).
+
+Select “Add to Home Screen”.
+
+Tap Add in the top-right corner.
+
+The app will appear in your app drawer and function like a native app.

@@ -27,6 +27,11 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/screenshot-mobile-1.png',
         sizes: '750x1624',
         type: 'image/png',
+      },
+      {
+        src: '/screenshot-mobile-2.png',
+        sizes: '750x1624',
+        type: 'image/png',
       }
     ],
     protocol_handlers: [
