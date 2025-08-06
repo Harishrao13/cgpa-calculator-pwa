@@ -4,7 +4,8 @@ import { useState } from "react";
 import TopBar from "./TopBar";
 import CoursesSection from "./components/CoursesSection";
 import { CGPAProvider } from '@/contexts/CGPAContext';
-import { ThemeProvider } from '@/contexts/ThemeContext'
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { Analytics } from '@vercel/analytics/next';
 
 export default function Home() {
   return (
@@ -23,6 +24,8 @@ export default function Home() {
           Please use this app on mobile
         </h1>
       </div>
+
+      <Analytics />
     </>
   );
 }
