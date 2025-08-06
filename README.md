@@ -2,9 +2,11 @@
 
 CGPA Calculator PWA is a progressive web app to help students log semester-wise courses, credits, and grades to automatically compute SGPA and CGPA. Add, update, or remove courses as you go.
 
-![Light Theme](./images/light_theme.jpg)
-
-![Dark Theme](./images/dark_theme.jpg)
+<p align="center">
+  <img src="./images/light_theme.jpg" alt="Light Theme" width="300"/>
+  &nbsp; &nbsp;
+  <img src="./images/dark_theme.jpg" alt="Dark Theme" width="300"/>
+</p>
 
 ## Installation
 
