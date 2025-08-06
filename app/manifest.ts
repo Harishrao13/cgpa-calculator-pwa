@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'CGPA Calculator',
-    short_name: 'Absolute CGPA',
+    short_name: 'CGPA Calc',
     description: 'Calculate your CGPA and SGPA',
     id: '/',
     start_url: '/',
