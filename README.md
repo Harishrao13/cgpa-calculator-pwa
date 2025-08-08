@@ -22,7 +22,7 @@ Works best on Chrome 80+ with automatic install prompt.
 
 ### iOS
 
-Installing on iOS (Safari only):
+Installing on iOS(Safari only):
 
 Open the app in Safari.
 
