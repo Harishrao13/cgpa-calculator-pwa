@@ -7897,6 +7897,14 @@ const coursesData: Course[] = [
     cdcList: [],
     delList: [],
   },
+  {
+    deptCode: "BITS",
+    courseCode: "F101-1",
+    courseTitle: "Social Conduct",
+    courseCredits: 1,
+    cdcList: [],
+    delList: [],
+  },
 ];
 
 export default coursesData;
